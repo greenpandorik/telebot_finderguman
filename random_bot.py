@@ -6,7 +6,7 @@ import sqlite3
 import random
 import time
 
-from telegram.ext import CommandHandler, Updater
+from telegram.ext import Updater, MessageHandler, CommandHandler
 from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 
@@ -208,9 +208,12 @@ def donate_msg(update, context):
     time.sleep(2)
     context.bot.send_message(chat_id=update.effective_chat.id, text=f'Можно кинуть криптовалюту USDT на этот кошелёк ⬇️')
     context.bot.send_message(chat_id=update.effective_chat.id, text=f'0x4f0f7a5fac8bfe0527140e99e6cb4f37a6cfac7a')
+    
+def echo(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"I don't understand you 😕❓🚪")
 
-# def unknown_msg(update, context):
-#     update.message.reply_text(f"Sorry {update.message.text} is not a valid command")
+def new_members(update, context):
+    context.bot.send_message(chat_id=update.effective_chat.id, text=f"Не забудьте написать команду\n/reg\nЧтобы зарегистрироваться в моей базе 😈")
 
 def main():
     updater = Updater(token=secret_token)
@@ -220,6 +223,8 @@ def main():
     updater.dispatcher.add_handler(CommandHandler('best', found_best, run_async= True))
     updater.dispatcher.add_handler(CommandHandler('beststatistic', stat_best, run_async= True))
     updater.dispatcher.add_handler(CommandHandler('donate', donate_msg, run_async= True))
+    updater.dispatcher.add_handler(MessageHandler(Filters.regex(r'@bestorpidrofday_bot') & (~Filters.command), echo))
+    updater.dispatcher.add_handler(MessageHandler(Filters.status_update.new_chat_members, new_members))
     # updater.dispatcher.add_handler(MessageHandler(filters.Entity (MENTION), unknown_msg, run_async= True))
     updater.start_polling()
     updater.idle()

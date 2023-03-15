@@ -11,8 +11,8 @@ from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 
 
-apikey = "AIzaSyBpgPMseeyDEfyDc0i_EySVDF0vdRjvVmk"
-secret_token = '5902342566:AAFzba_P4guhSDx9HI4ZxC-8UkMXJ8hxdeQ'
+apikey = ""
+secret_token = ''
 conn = sqlite3.connect('db/database.db', check_same_thread=False)
 cursor = conn.cursor()
 

@@ -5,14 +5,15 @@ import requests
 import sqlite3
 import random
 import time
+import re
 
 from telegram.ext import Updater, MessageHandler, CommandHandler
 from telegram.ext.filters import Filters
 from telegram.ext.messagehandler import MessageHandler
 
 
-apikey = ""
-secret_token = ''
+apikey = "AIzaSyBpgPMseeyDEfyDc0i_EySVDF0vdRjvVmk"
+secret_token = '5902342566:AAFzba_P4guhSDx9HI4ZxC-8UkMXJ8hxdeQ'
 conn = sqlite3.connect('db/database.db', check_same_thread=False)
 cursor = conn.cursor()
 
@@ -51,6 +52,7 @@ def add_result_in_bd(chat_name, user_id, best_stat, pidr_stat):
 def del_whitespaces(chat_name):
     try:
         chat_name = chat_name.replace(" ", "")
+        chat_name = re.sub(r'[^\w\s]', '', chat_name)
         return chat_name
     except:
         return chat_name
@@ -66,10 +68,11 @@ def check_username(user_id, chat_name):
 
 def reg_customer(update, context):
     chat = update.effective_chat
-    context.bot.send_message(
-        chat_id=chat.id,
-        text='Хах, а ты смельчак @{}'.format(update.message.from_user.username)
-    )
+    name_user = update.message.from_user
+    if name_user.username is None:
+        context.bot.send_message(chat_id=chat.id, text='Хах, а ты смельчак {}'.format(name_user.first_name))
+    else:
+        context.bot.send_message(chat_id=chat.id, text='Хах, а ты смельчак @{}'.format(name_user.username))
     try:
         chat_name = del_whitespaces(chat_name=update.message.chat.title)
         user_id = update.message.from_user.id
@@ -124,7 +127,7 @@ def found_pidr(update, context):
 
 def stat_pidr(update, context):
     chat_name = del_whitespaces(chat_name=update.message.chat.title)
-    cursor.execute(f'SELECT username, pidr_stat, user_name FROM {chat_name} WHERE user_id != 1 AND user_id != 2;')
+    cursor.execute(f'SELECT username, pidr_stat, user_name FROM {chat_name} WHERE user_id != 1 AND user_id != 2 ORDER BY pidr_stat DESC;')
     all_results = cursor.fetchall()
     result = ""
     i = 1
@@ -179,7 +182,7 @@ def found_best(update, context):
 
 def stat_best(update, context):
     chat_name = del_whitespaces(chat_name=update.message.chat.title)
-    cursor.execute(f'SELECT username, best_stat, user_name FROM {chat_name} WHERE user_id != 1 AND user_id != 2;')
+    cursor.execute(f'SELECT username, best_stat, user_name FROM {chat_name} WHERE user_id != 1 AND user_id != 2 ORDER BY best_stat DESC;')
     all_results = cursor.fetchall()
     result = ""
     i = 1
@@ -203,7 +206,7 @@ def donate_msg(update, context):
     time.sleep(2)
     context.bot.send_message(
             chat_id=update.effective_chat.id,
-            text='https://www.donationalerts.com/r/greenpandorik'
+            text='https://pay.cloudtips.ru/p/4235c903'
         )
     time.sleep(2)
     context.bot.send_message(chat_id=update.effective_chat.id, text=f'Можно кинуть криптовалюту USDT на этот кошелёк ⬇️')
